@@ -1,5 +1,0 @@
-emcc -o game.html game.c -Os -Wall ./path-to/libraylib.a -I. -Ipath-to-raylib-h -L. -Lpath-to-libraylib-a -s USE_GLFW=3 --shell-file path-to/shell.html -DPLATFORM_WEB
-
-emcc -s WASM=1 -Os -I mruby/include hello_ruby.c mruby/build/emscripten/lib/libmruby.a -o hello_ruby.js --closure 1
-
-emcc -o game.html anything.c -Os -Wall -I ../../mruby/include/ -I ../raylib/src/ -DPLATFORM_WEB --shell-file ../../raylib/src/shell.html  ../../mruby/build/web/lib/libmruby.a ../../raylib_lib_files/web/libraylib.a --closure 1 -s USE_GLFW=3 -s ASYNCIFY

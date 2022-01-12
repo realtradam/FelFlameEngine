@@ -1,8 +1,15 @@
-desc "Build your game"
-task :build do
-  desc "Build game"
-  Dir.chdir("mruby") do
-    `env MRUBY_CONFIG=build_config/felflame_linux.rb rake`
+namespace :build do
+  desc "Build the engine"
+  task :mruby do
+    Dir.chdir("mruby") do
+      `env MRUBY_CONFIG=build_config/felflame_linux.rb rake`
+    end
+  end
+  desc 'Build the game'
+  task :game do
+    Dir.chdir("build/temp") do
+      `emcc -s WASM=1 -Os -I ../../mruby/include/ ../template/game.c ../../mruby/build/web/lib/libmruby.a -o game.html --closure 1 ../../raylib_lib_files/web/libraylib.a -I ../../raylib/src/ -s USE_GLFW=3`
+    end
   end
 end
 
