@@ -1,3 +1,4 @@
+desc "Build your game"
 task :build do
   desc "Build game"
   Dir.chdir("mruby") do
@@ -5,6 +6,7 @@ task :build do
   end
 end
 
+desc "Create a server and open your game in your browser"
 task :serve do
   link = "http://localhost:8000/game.html"
   if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
