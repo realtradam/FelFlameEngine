@@ -1,0 +1,6 @@
+[submodule "mruby"]
+	path = mruby
+	url = git@github.com:realtradam/mruby.git
+[submodule "raylib"]
+	path = raylib
+	url = git@github.com:realtradam/raylib.git
