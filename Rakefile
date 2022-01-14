@@ -9,11 +9,30 @@ namespace :build do
       system('env MRUBY_CONFIG=build_config/felflame_linux.rb rake')
     end
   end
-  desc 'Compile the game to bytecode'
-  task :bytecode do
+  #desc 'Export to single file'
+  task :single_file do
+    result = ''
+    main = File.read('game/main.rb')
+    tmp = main.lines(chomp: true).select do |line|
+      line.include? 'require '
+    end
+    tmp.each do |file|
+      file.delete_prefix!('require ')
+      result += "#{File.read("game/#{file[1, file.length - 2]}")}\n"
+    end
+
+    result += main.lines.reject do |line|
+      line.include? 'require '
+    end.join
+
+    Dir.mkdir("build/temp") unless File.exists?("build/temp")
+    File.write('build/temp/main.rb', result)
+  end
+  #desc 'Compile the game to bytecode'
+  task :bytecode => :single_file do
     Dir.mkdir("build/temp") unless File.exists?("build/temp")
     Dir.chdir("build/temp") do
-      system("../../mruby/bin/mrbc -Bbytecode -obytecode.h ../../game.rb")
+      system("../../mruby/bin/mrbc -Bbytecode -obytecode.h main.rb")
     end
   end
   desc 'Build the game for web'
