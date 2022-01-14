@@ -1,24 +1,33 @@
 namespace :build do
-  @include_dir = '../../vendor/include'
-  @library_dir = '../../vendor/lib'
+  @vendor_dir = '../../vendor'
+  @include_dir = "#{@vendor_dir}/include"
+  @library_dir = "#{@vendor_dir}/lib"
+  @bytecode_header_path = "../temp"
   desc "Build the engine"
   task :mruby do
     Dir.chdir("mruby") do
       system('env MRUBY_CONFIG=build_config/felflame_linux.rb rake')
     end
   end
+  desc 'Compile the game to bytecode'
+  task :bytecode do
+    Dir.mkdir("build/temp") unless File.exists?("build/temp")
+    Dir.chdir("build/temp") do
+      system("../../mruby/bin/mrbc -Bbytecode -obytecode.h ../../game.rb")
+    end
+  end
   desc 'Build the game for web'
-  task :web do
+  task :web => :bytecode do
     Dir.mkdir("build/web") unless File.exists?("build/web")
     Dir.chdir("build/web") do
-      system("emcc -s WASM=1 -Os -I#{@include_dir}/raylib -I#{@include_dir}/mruby ../template/game.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o index.html --closure 1 -s USE_GLFW=3")
+      system("emcc -s WASM=1 -Os -I#{@include_dir}/raylib -I#{@include_dir}/mruby -I#{@bytecode_header_path} #{@vendor_dir}/boilerplate.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o index.html --closure 1 -s USE_GLFW=3")
     end
   end
   desc 'Build the game for Linux'
-  task :tux do
+  task :tux => :bytecode do
     Dir.mkdir("build/tux") unless File.exists?("build/tux")
     Dir.chdir("build/tux") do
-      system("zig cc -target native ../template/game.c -o game -lGL -lm -lpthread -ldl -lrt -lX11 -I#{@include_dir}/raylib -I#{@include_dir}/mruby #{@library_dir}/tux/mruby/libmruby.a #{@library_dir}/tux/raylib/libraylib.a")
+      system("zig cc -target native #{@vendor_dir}/boilerplate.c -o game -lGL -lm -lpthread -ldl -lrt -lX11 -I#{@bytecode_header_path} -I#{@include_dir}/raylib -I#{@include_dir}/mruby #{@library_dir}/tux/mruby/libmruby.a #{@library_dir}/tux/raylib/libraylib.a")
     end
   end
   #desc 'Build the game for Window'
