@@ -35,10 +35,6 @@ namespace :build do
       system("../../mruby/bin/mrbc -Bbytecode -obytecode.h main.rb")
     end
   end
-  desc 'Launch the game'
-  task :playtest => :single_file do
-    system("./mruby/build/host/bin/mruby build/temp/main.rb'")
-  end
   desc 'Build the game for web'
   task :web => :bytecode do
     Dir.mkdir("build/web") unless File.exists?("build/web")
@@ -61,6 +57,15 @@ namespace :build do
   #  end
   #end
 end
+
+desc 'Launch the game'
+task :playtest => "build:single_file" do
+  Dir.chdir("build/temp") do
+    system("../../mruby/build/host/bin/mruby main.rb")
+  end
+end
+task :p => :playtest
+
 
 namespace :clean do
   desc "Clean the mruby build folders"
