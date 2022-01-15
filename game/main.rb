@@ -1,2 +1,2 @@
 require 'lib/hello.rb'
-Ye.c_method
+Raylib.init_window(1000, 300, "poggies")

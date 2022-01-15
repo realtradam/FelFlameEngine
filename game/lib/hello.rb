@@ -1,1 +1,1 @@
-puts 'hello'
+puts Raylib.platform
