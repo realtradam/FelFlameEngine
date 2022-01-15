@@ -6,6 +6,14 @@ namespace :build do
   desc "Build the engine"
   task :mruby do
     Dir.chdir("mruby") do
+      Dir.each_child("build/repos") do |repo_dir|
+        Dir.each_child("build/repos/#{repo_dir}") do |gem_dir|
+          puts "Checking updates for: #{gem_dir}"
+          Dir.chdir("build/repos/#{repo_dir}/#{gem_dir}") do
+            system('git pull')
+          end
+        end
+      end
       system('env MRUBY_CONFIG=build_config/felflame_linux.rb rake')
     end
   end
