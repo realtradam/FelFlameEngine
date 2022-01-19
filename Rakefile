@@ -1,3 +1,4 @@
+require 'fileutils'
 namespace :build do
   @vendor_dir = '../../vendor'
   @include_dir = "#{@vendor_dir}/include"
@@ -15,6 +16,9 @@ namespace :build do
         end
       end
       system('env MRUBY_CONFIG=build_config/felflame_linux.rb rake')
+      FileUtils.cp("build/web/lib/libmruby.a", "../vendor/lib/web/mruby/")
+      FileUtils.cp("build/host/lib/libmruby.a", "../vendor/lib/tux/mruby/")
+      FileUtils.cp("build/win/lib/libmruby.a", "../vendor/lib/win/mruby/")
     end
   end
   #desc 'Export to single file'
