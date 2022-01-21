@@ -6,7 +6,27 @@ Rl.target_fps = 60
 color = Rl::Color.new(200,50,50,255)
 white = Rl::Color.new(255,255,255,255)
 
+rect1 = Rl::Rectangle.new(50,50,10,10)
+rect2 = Rl::Rectangle.new(100,50,10,10)
+circ1 = Rl::Circle.new(100,100,10)
+circ2 = Rl::Circle.new(100,50,10)
+
+puts "rect1: #{rect1.x} #{rect1.y} #{rect1.w} #{rect1.h}"
+puts "circ1: #{circ1.x} #{circ1.y} #{circ1.radius}"
+
+puts "false: #{rect1.collide_with_rect? rect2}" # no
+puts "true: #{rect1.collide_with_rect? rect1}" # ya
+
+puts "false: #{circ1.collide_with_rect? rect1}" # no
+puts "true: #{circ2.collide_with_rect? rect2}" # ya
+
+puts "true: #{rect2.collide_with_circle? circ2}" # ya
+
+puts "false: #{circ1.collide_with_circle? circ2}" # no
+puts "true: #{circ1.collide_with_circle? circ1}" # ya
+
 pause_champ = Rl::Texture.new("./assets/PauseChamp.png")
+puts "#{pause_champ.w} #{pause_champ.h}"
 
 y = 10
 spaceing = 25
@@ -30,6 +50,16 @@ Rl.while_window_open do
       x: result_x - 100,
       y: result_y + 200 - 140
     )
+  end
+
+  if Rl.is_key_down? 72
+    pause_champ.w += 10
+    pause_champ.h += 10
+  end
+  
+  if Rl.is_key_down? 71
+    pause_champ.w += 10
+    pause_champ.h += 10
   end
 
   Rl.draw_text(
