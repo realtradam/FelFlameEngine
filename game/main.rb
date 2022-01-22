@@ -1,6 +1,9 @@
 text = "Our poggies game engine :^)"
 
 Rl.init_window(600, 600, text)
+puts 'init audio device'
+Rl.init_audio_device
+puts 'it was init\'ed'
 
 Rl.target_fps = 60
 color = Rl::Color.new(200,50,50,255)
@@ -29,10 +32,14 @@ puts "true: #{circ1.collide_with_circle? circ1}" # ya
 pause_champ = Rl::Texture.new("./assets/PauseChamp.png")
 puts "#{pause_champ.w} #{pause_champ.h}"
 
+collect_this_texture = Rl::Texture.new("./assets/PauseChamp.png")
+collect_this_texture = nil
+
+boop = Rl::Sound.new("./assets/boop.wav")
+
+# FelECS test
 FECS::Cmp.new('Yep', x: 3)
-
 a = FECS::Cmp::Yep.new
-
 puts "A: #{a.x}"
 
 y = 10
