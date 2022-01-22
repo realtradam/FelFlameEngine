@@ -2,13 +2,13 @@ text = "Our poggies game engine :^)"
 
 Rl.init_window(600, 600, text)
 puts 'init audio device'
-Rl.init_audio_device
+#Rl.init_audio_device
 puts 'it was init\'ed'
 
 Rl.target_fps = 60
 color = Rl::Color.new(200,50,50,255)
 white = Rl::Color.new(255,255,255,255)
-color2 = Rl::Color.new(200,15,15,255)
+black = Rl::Color.new(0,0,0,255)
 
 rect1 = Rl::Rectangle.new(50,50,10,10)
 rect2 = Rl::Rectangle.new(100,50,10,10)
@@ -30,6 +30,7 @@ puts "false: #{circ1.collide_with_circle? circ2}" # no
 puts "true: #{circ1.collide_with_circle? circ1}" # ya
 
 pause_champ = Rl::Texture.new("./assets/PauseChamp.png")
+hollow = Rl::Texture.new("./assets/hollow.png")
 puts "#{pause_champ.w} #{pause_champ.h}"
 
 collect_this_texture = Rl::Texture.new("./assets/PauseChamp.png")
@@ -45,6 +46,7 @@ puts "A: #{a.x}"
 y = 10
 spaceing = 25
 font_size = 30
+blend_mode = 0
 
 Rl.while_window_open do
   result_x = (Math.cos(Rl.time*2) * 100) + 250
@@ -54,18 +56,32 @@ Rl.while_window_open do
     puts Rl.keys_pressed.to_s
   end
 
-  Rl.draw(clear_color: white) do
+  if Rl.mouse_button_pressed? 0
+    puts "Blend Mode: #{blend_mode += 1}"
+  end
 
-    Rl.scissor_mode(x: Rl.mouse_x - 50, y: Rl.mouse_y - 50, width: 100, height: 100) do
-      if Rl.mouse_button_up? 0
-        # Draw moving pausechamp face
-        Rl.draw_texture(
-          texture: pause_champ,
-          x: result_x - 100,
-          y: result_y + 200 - 140
-        )
-      end
+  Rl.draw(clear_color: black) do
+
+    #Rl.scissor_mode(x: Rl.mouse_x - 50, y: Rl.mouse_y - 50, width: 100, height: 100) do
+    if Rl.mouse_button_up? 0
+      # Draw moving pausechamp face
+      Rl.draw_texture(
+        texture: pause_champ,
+        x: result_x - 100,
+        y: result_y + 200 - 140
+      )
     end
+    # end
+
+    Rl.begin_blend_mode(blend_mode)
+    Rl.draw_texture(
+      texture: hollow,
+      x: Rl.mouse_x - 50,
+      y: Rl.mouse_y - 50,
+      tint: white
+    )
+
+    Rl.end_blend_mode
 
     if Rl.key_down? 72
       pause_champ.w += 10
