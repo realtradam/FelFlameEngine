@@ -54,7 +54,9 @@ canvas.emscripten { border: 0px none; background-color: black; }
 		</script>
 	</head>
 	<body>
-		<canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1 style="border:0px; outline:0px;"></canvas>
+		<div style="text-align: center">
+			<canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1 style="border:0px; outline:0px; display: inline-block; width:900px;"></canvas>
+		</div>
 		<p id="output" />
 		<script>
 			var Module = {
