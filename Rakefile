@@ -51,7 +51,7 @@ namespace :build do
   task :web => :bytecode do
     Dir.mkdir("build/web") unless File.exists?("build/web")
     Dir.chdir("build/web") do
-      system("emcc -Os -Wall -I#{@include_dir}/raylib -I#{@include_dir}/mruby -I#{@bytecode_header_path} #{@vendor_dir}/boilerplate.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{@vendor_dir}/html/minshell.html")
+      system("emcc -Os -Wall -I#{@include_dir}/raylib -I#{@include_dir}/mruby -I#{@bytecode_header_path} #{@vendor_dir}/boilerplate.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{@vendor_dir}/html/minshell.html -s TOTAL_MEMORY=268435456") # -s ASYNCIFY
     end
   end
   desc 'Build the game for Linux'
