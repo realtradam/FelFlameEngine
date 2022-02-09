@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-		<title>raylib web game</title>
+		<title>Orc: Arena of Time</title>
 
 		<meta name="title" content="raylib web game">
 		<meta name="description" content="New raylib web videogame, developed using raylib videogames library">
@@ -53,9 +53,9 @@ canvas.emscripten { border: 0px none; background-color: black; }
 						}
 		</script>
 	</head>
-	<body>
-		<div style="text-align: center">
-			<canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1 style="border:0px; outline:0px; display: inline-block; width:900px;"></canvas>
+	<body style="height:100vh; margin:0; position:relative;">
+		<div style="display: flex; justify-content: center; align-items: center; height: 100%">
+			<canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1 style="border:0px; outline:0px; aspect-ratio: attr(width)/attr(height); max-width:100vw; max-height:100vh;"></canvas>
 		</div>
 		<p id="output" />
 		<script>
