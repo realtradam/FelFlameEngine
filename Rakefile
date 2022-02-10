@@ -1,9 +1,9 @@
 require 'fileutils'
 namespace :build do
-  @vendor_dir = '../../vendor'
+  @vendor_dir = '../vendor'
   @include_dir = "#{@vendor_dir}/include"
   @library_dir = "#{@vendor_dir}/lib"
-  @bytecode_header_path = "../temp"
+  @bytecode_header_path = "../build/temp"
   desc "Build the engine"
   task :mruby do
     Dir.chdir("mruby") do
@@ -50,15 +50,18 @@ namespace :build do
   desc 'Build the game for web'
   task :web => :bytecode do
     Dir.mkdir("build/web") unless File.exists?("build/web")
-    Dir.chdir("build/web") do
-      system("emcc -Os -Wall -I#{@include_dir}/raylib -I#{@include_dir}/mruby -I#{@bytecode_header_path} #{@vendor_dir}/boilerplate.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{@vendor_dir}/html/minshell.html -s TOTAL_MEMORY=268435456") # -s ASYNCIFY
+    #Dir.chdir("build/web") do
+    Dir.chdir("game") do
+      system("emcc -Os -Wall -I#{@include_dir}/raylib -I#{@include_dir}/mruby -I#{@bytecode_header_path} #{@vendor_dir}/boilerplate.c #{@library_dir}/web/mruby/libmruby.a #{@library_dir}/web/raylib/libraylib.a -o ../build/web/index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{@vendor_dir}/html/minshell.html -s TOTAL_MEMORY=268435456") # -s ASYNCIFY
     end
   end
   desc 'Build the game for Linux'
   task :tux => :bytecode do
     Dir.mkdir("build/tux") unless File.exists?("build/tux")
-    Dir.chdir("build/tux") do
-      system("zig cc -target native #{@vendor_dir}/boilerplate.c -o game -lGL -lm -lpthread -ldl -lrt -lX11 -I#{@bytecode_header_path} -I#{@include_dir}/raylib -I#{@include_dir}/mruby #{@library_dir}/tux/mruby/libmruby.a #{@library_dir}/tux/raylib/libraylib.a")
+    #Dir.chdir("build/tux") do
+    Dir.chdir("game") do
+      system("zig cc -target native #{@vendor_dir}/boilerplate.c -o ../build/tux/game -lGL -lm -lpthread -ldl -lrt -lX11 -I#{@bytecode_header_path} -I#{@include_dir}/raylib -I#{@include_dir}/mruby #{@library_dir}/tux/mruby/libmruby.a #{@library_dir}/tux/raylib/libraylib.a")
+      system("rsync -r ./assets ../build/tux")
     end
   end
   #desc 'Build the game for Window'
@@ -72,8 +75,8 @@ end
 
 desc 'Launch the game'
 task :playtest => "build:single_file" do
-  Dir.chdir("build/temp") do
-    system("../../mruby/build/host/bin/mruby main.rb")
+  Dir.chdir("game") do
+    system("../mruby/build/host/bin/mruby ../build/temp/main.rb")
   end
 end
 task :p => :playtest
