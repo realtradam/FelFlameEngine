@@ -53,14 +53,16 @@ namespace :build do
       line.include? 'require '
     end.join
 
+    Dir.mkdir("build") unless File.exists?("build")
     Dir.mkdir("build/temp") unless File.exists?("build/temp")
     File.write('build/temp/main.rb', result)
   end
   #desc 'Compile the game to bytecode'
   task :bytecode => :single_file do
+    Dir.mkdir("build") unless File.exists?("build")
     Dir.mkdir("build/temp") unless File.exists?("build/temp")
     Dir.chdir("build/temp") do
-      system("../../mruby/bin/mrbc -Bbytecode -obytecode.h main.rb")
+      system("../../core/mruby/bin/mrbc -Bbytecode -obytecode.h main.rb")
     end
   end
   desc 'Build the game for web'
@@ -92,7 +94,7 @@ end
 desc 'Launch the game'
 task :playtest => "build:single_file" do
   Dir.chdir("game") do
-    system("../mruby/build/host/bin/mruby ../build/temp/main.rb")
+    system("../core/mruby/build/host/bin/mruby ../build/temp/main.rb")
   end
 end
 task :p => :playtest
