@@ -1,5 +1,5 @@
-configure_project_root = '..'
-configure_mrbgem_dir = "#{configure_project_root}/mrbgems"
+configure_project_root = File.expand_path('../..')
+configure_mrbgem_dir = File.expand_path("#{configure_project_root}/mrbgems")
 
 
 MRuby::Build.new do |conf|
@@ -65,8 +65,9 @@ MRuby::Build.new do |conf|
   # -- YOUR GAMES --
   # gems added into the mrbgems directory
 
+  puts "HERE: #{File.expand_path(configure_mrbgem_dir)}"
   Dir.each_child(configure_mrbgem_dir) do |mrb_gem|
-    conf.gem mrb_gem
+    conf.gem "#{configure_mrbgem_dir}/#{mrb_gem}"
   end
 
   # ---

@@ -6,19 +6,35 @@ namespace :build do
   @bytecode_header_path = "../build/temp"
   desc "Build the engine"
   task :mruby do
-    Dir.chdir("mruby") do
-      Dir.each_child("build/repos") do |repo_dir|
-        Dir.each_child("build/repos/#{repo_dir}") do |gem_dir|
-          puts "Checking updates for: #{gem_dir}"
-          Dir.chdir("build/repos/#{repo_dir}/#{gem_dir}") do
-            system('git pull')
-          end
-        end
-      end
-      system('env MRUBY_CONFIG=build_config/felflame_linux.rb rake')
-      FileUtils.cp("build/web/lib/libmruby.a", "../vendor/lib/web/mruby/")
-      FileUtils.cp("build/host/lib/libmruby.a", "../vendor/lib/tux/mruby/")
+    Dir.chdir("core/mruby") do
+      #Dir.each_child("build/repos") do |repo_dir|
+      #  Dir.each_child("build/repos/#{repo_dir}") do |gem_dir|
+      #    puts "Checking updates for: #{gem_dir}"
+      #    Dir.chdir("build/repos/#{repo_dir}/#{gem_dir}") do
+      #      system('git pull')
+      #    end
+      #  end
+      #end
+      system('env MRUBY_CONFIG=../mruby_build.rb rake')
+      #FileUtils.cp("build/web/lib/libmruby.a", "../../vendor/web/lib/mruby/")
+      FileUtils.cp("build/host/lib/libmruby.a", "../../vendor/tux/lib/")
       #FileUtils.cp("build/win/lib/libmruby.a", "../vendor/lib/win/mruby/")
+    end
+  end
+
+  desc "Build Raylib"
+  task :raylib do
+    Dir.chdir("core/raylib/src") do
+      `make clean`
+      puts 'building...'
+      `make PLATFORM=PLATFORM_DESKTOP`
+      puts
+      puts 'installing, this should prompt you to enter password unless you are already in sudo'
+      `sudo DESTDIR=#{File.expand_path('../../../vendor/tux')} make install`
+      `make clean`
+      #`make PLATFORM=PLATFORM_WEB`
+      #`sudo DESTDIR=/path/u/want make install`
+      #`make clean`
     end
   end
   #desc 'Export to single file'
@@ -85,9 +101,12 @@ task :p => :playtest
 namespace :clean do
   desc "Clean the mruby build folders"
   task :mruby do
-    Dir.chdir("mruby") do
+    Dir.chdir("core/mruby") do
       system('rake deep_clean')
     end
+  end
+  task :raylib do
+    puts 'Not implemented yet'
   end
 end
 
