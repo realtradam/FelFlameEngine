@@ -1,0 +1,61 @@
+# FelFlame Engine
+
+FelFlame Engine is a modular "library-style" Ruby game engine. It allows you to consists of a core set of libraries(mruby + raylib) which you can freely add your own mruby or C libraries on top of to be compiled into a single game or engine. Currently it exports to Linux and Web but more platforms are possible and planned.
+
+## How to build
+
+Currently building only tested/used on Linux(Arch and OpenSUSE)  
+No support for building on windows is planned but you are welcome to add it yourself ;)
+
+```sh
+
+# building libraries + engine
+rake build:raylib
+rake build:mruby
+
+# you can now access the interpreters under [add url here]
+
+# if you have a game under 'game/main.rb':
+# build for linux
+rake build:tux
+# build for web
+rake build:web
+
+# you can then try your game with:
+# Desktop:
+rake play
+# Web:
+rake serve
+
+# building for windows planned for the future
+```
+
+## Directories Explained:
+
+### core/
+Contains the core git-submodules which are needed for the engine(mruby for the Ruby language and Raylib for rendering). Also contains some template files used during compilation.
+
+### vendor/
+The location of any compiled libraries and headers. These are 'included' into the engine or game when it is compiled.
+
+### game/
+All your game files. `main.rb` is the "entry point" of your game and the assets directory is where your assets should go as they are bundled for the web export.
+
+### build/
+Where your game is exported to when it is compiled.
+
+### mrbgems/
+Here are all the gems you wish to be compiled into the engine. Any directories in this directory will be treated as a gem to be included into the compilation process however you may still need to edit the [build file] to add the appropriate flags if necessary.
+
+## Extras:
+
+By default this engine comes with just Ruby and Raylib. Here are some additional gems you could use if you want more:
+
+| Gem                                            | Description                            |
+| ---                                            | ---                                    |
+| [FelECS](https://github.com/realtradam/FelECS) | Pure Ruby ECS designed for ease of use |
+| ...                                            | More coming soon                       |
+
+### FelBind
+
+You can create your own gems based on C libraries more easily by utilizing the binding generation library FelBind. See more here: https://github.com/realtradam/FelBind
