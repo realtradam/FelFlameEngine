@@ -62,7 +62,7 @@ MRuby::Build.new do |conf|
   # Dir
   #conf.gem :git => 'https://github.com/iij/mruby-dir'
 
-  # -- YOUR GAMES --
+  # -- YOUR GEMS --
   # gems added into the mrbgems directory
 
   puts "HERE: #{File.expand_path(configure_mrbgem_dir)}"
@@ -98,6 +98,7 @@ MRuby::Build.new do |conf|
   conf.enable_bintest
   conf.enable_test
 end
+
 =begin
 MRuby::CrossBuild.new("tux") do |conf|
   conf.toolchain :clang
@@ -183,7 +184,7 @@ MRuby::CrossBuild.new("win") do |conf|
   conf.cxx.command = "zig c++ -target x86_64-windows-gnu"
 end
 =end
-=begin
+
 MRuby::CrossBuild.new("web") do |conf|
   conf.toolchain :clang
 
@@ -245,11 +246,11 @@ MRuby::CrossBuild.new("web") do |conf|
   # Dir
   #conf.gem :git => 'https://github.com/iij/mruby-dir'
 
-  # -- YOUR GAMES --
+  # -- YOUR GEMS --
   # gems added into the mrbgems directory
 
   Dir.each_child(configure_mrbgem_dir) do |mrb_gem|
-    conf.gem mrb_gem
+    conf.gem "#{configure_mrbgem_dir}/#{mrb_gem}"
   end
 
   # ---
@@ -261,7 +262,7 @@ MRuby::CrossBuild.new("web") do |conf|
 
   conf.linker do |linker|
     linker.command = 'emcc'
-    linker.flags = ["-std=c99 --shell-file #{configure_project_root}/raylib/src/shell.html"]
+    linker.flags = ["-std=c99 --shell-file #{configure_project_root}/core/shell.html"]
     linker.library_paths = ['.']
   end
 
@@ -273,20 +274,15 @@ MRuby::CrossBuild.new("web") do |conf|
     cxx.command = "em++"
   end
 
-  # FelECS
-  conf.gem github: 'realtradam/FelECS', path: 'mrbgem'
-
-  # Raylib
-  #conf.gem :git => 'git@github.com:realtradam/mruby-raylib.git', :branch => 'master'
-  conf.gem '../../mruby-raylib'# do |g|
   conf.cc do |cc|
-    cc.include_paths << ["#{configure_project_root}/include", "#{configure_project_root}/vendor/include/raylib"]
+    #cc.include_paths << ["#{configure_project_root}/include", "#{configure_project_root}/vendor/include/raylib"]
+    cc.include_paths << ["#{configure_project_root}/vendor/web/include"]
     cc.flags << ['-Wall', '-D_DEFAULT_SOURCE', '-Wno-missing-braces', '-Os', '-DPLATFORM_WEB']
   end
   conf.linker do |linker|
     linker.flags << ["-lraylib -Wall -D_DEFAULT_SOURCE -Wno-missing-braces -Os -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1"]
-    linker.library_paths << ["#{configure_project_root}/raylib/src", "#{configure_project_root}/vendor/lib/web/raylib"]
+    #linker.library_paths << ["#{configure_project_root}/raylib/src", "#{configure_project_root}/vendor/lib/web/raylib"]
+    linker.library_paths << ["#{configure_project_root}/vendor/web/lib"]
   end
 
 end
-=end
