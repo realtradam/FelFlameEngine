@@ -10,13 +10,15 @@ config_build_raylib_source = File.expand_path("#{config_root}/core/raylib/src")
 config_mruby = File.expand_path("#{config_root}/core/mruby")
 config_include_mruby = File.expand_path("#{config_mruby}/include")
 
-config_tux = File.expand_path("#{config_root}/vendor/tux")
-config_tux_include = File.expand_path("#{config_root}/vendor/tux/include")
-config_tux_lib = File.expand_path("#{config_root}/vendor/tux/lib")
+config_vendor = File.expand_path("#{config_root}/vendor")
 
-config_web = File.expand_path("#{config_root}/vendor/web")
-config_web_include = File.expand_path("#{config_root}/vendor/web/include")
-config_web_lib = File.expand_path("#{config_root}/vendor/web/lib")
+config_tux = File.expand_path("#{config_vendor}/tux")
+config_tux_include = File.expand_path("#{config_vendor}/tux/include")
+config_tux_lib = File.expand_path("#{config_vendor}/tux/lib")
+
+config_web = File.expand_path("#{config_vendor}/web")
+config_web_include = File.expand_path("#{config_vendor}/web/include")
+config_web_lib = File.expand_path("#{config_vendor}/web/lib")
 
 config_build = File.expand_path("#{config_root}/build")
 config_build_temp = File.expand_path("#{config_build}/temp")
@@ -34,6 +36,7 @@ namespace :build do
   desc "Build the engine"
   task :mruby do
     Dir.chdir("core/mruby") do
+      Dir.mkdir(config_vendor) unless File.exists?(config_vendor)
       #Dir.each_child("build/repos") do |repo_dir|
       #  Dir.each_child("build/repos/#{repo_dir}") do |gem_dir|
       #    puts "Checking updates for: #{gem_dir}"
@@ -51,6 +54,7 @@ namespace :build do
 
   desc "Build Raylib"
   task :raylib do
+    Dir.mkdir(config_vendor) unless File.exists?(config_vendor)
     Dir.chdir(config_build_raylib_source) do
       `make clean`
       puts 'building for tux...'
