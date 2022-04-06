@@ -20,57 +20,66 @@ config_web = File.expand_path("#{config_vendor}/web")
 config_web_include = File.expand_path("#{config_vendor}/web/include")
 config_web_lib = File.expand_path("#{config_vendor}/web/lib")
 
+config_win = File.expand_path("#{config_vendor}/win")
+config_win_include = File.expand_path("#{config_vendor}/win/include")
+config_win_lib = File.expand_path("#{config_vendor}/win/lib")
+
 config_build = File.expand_path("#{config_root}/build")
 config_build_temp = File.expand_path("#{config_build}/temp")
 config_build_tux = File.expand_path("#{config_build}/tux")
 config_build_web = File.expand_path("#{config_build}/web")
+config_build_win = File.expand_path("#{config_build}/win")
 
 config_game = File.expand_path("#{config_root}/game")
 
 namespace :build do
 
-  #@vendor_dir = '../vendor'
-  #@include_dir = "#{@vendor_dir}/include"
-  #@library_dir = "#{@vendor_dir}/lib"
-  #@bytecode_header_path = "../build/temp"
   desc "Build the engine"
   task :mruby do
     Dir.chdir("core/mruby") do
       Dir.mkdir(config_vendor) unless File.exists?(config_vendor)
-      #Dir.each_child("build/repos") do |repo_dir|
-      #  Dir.each_child("build/repos/#{repo_dir}") do |gem_dir|
-      #    puts "Checking updates for: #{gem_dir}"
-      #    Dir.chdir("build/repos/#{repo_dir}/#{gem_dir}") do
-      #      system('git pull')
-      #    end
-      #  end
-      #end
       system("env MRUBY_CONFIG=#{config_build_config} rake")
       FileUtils.cp("build/web/lib/libmruby.a", "#{config_web_lib}/")
       FileUtils.cp("build/host/lib/libmruby.a", "#{config_tux_lib}/")
-      #FileUtils.cp("build/win/lib/libmruby.a", "../vendor/lib/win/mruby/")
+      FileUtils.cp("build/win/lib/libmruby.a", "#{config_win_lib}/")
     end
   end
 
   desc "Build Raylib"
   task :raylib do
     Dir.mkdir(config_vendor) unless File.exists?(config_vendor)
+    Dir.mkdir(config_tux) unless File.exists?(config_tux)
+    Dir.mkdir("#{config_tux_lib}") unless File.exists?("#{config_tux_lib}")
+    Dir.mkdir("#{config_tux_include}") unless File.exists?("#{config_tux_include}")
+    Dir.mkdir(config_web) unless File.exists?(config_web)
+    Dir.mkdir("#{config_web_lib}") unless File.exists?("#{config_web_lib}")
+    Dir.mkdir("#{config_web_include}") unless File.exists?("#{config_web_include}")
+    Dir.mkdir(config_win) unless File.exists?(config_win)
+    Dir.mkdir("#{config_win_lib}") unless File.exists?("#{config_win_lib}")
+    Dir.mkdir("#{config_win_include}") unless File.exists?("#{config_win_include}")
+      #puts 'installing, this should prompt you to enter password unless you are already in sudo'
     Dir.chdir(config_build_raylib_source) do
       `make clean`
       puts 'building for tux...'
       `make PLATFORM=PLATFORM_DESKTOP`
-      puts
-    Dir.mkdir(config_tux) unless File.exists?(config_tux)
-      puts 'installing, this should prompt you to enter password unless you are already in sudo'
-      `sudo DESTDIR=#{config_tux} make install`
+      FileUtils.cp("raylib.h", "#{config_tux_include}/")
+      FileUtils.cp("raymath.h", "#{config_tux_include}/")
+      FileUtils.cp("rlgl.h", "#{config_tux_include}/")
+      # copy libraylib.a to  lib
+      FileUtils.cp("libraylib.a", "#{config_tux_lib}/")
       `make clean`
       puts 'building for web...'
-      `make PLATFORM=PLATFORM_WEB`
-      puts
-    Dir.mkdir(config_web) unless File.exists?(config_web)
-      puts 'installing, this should prompt you to enter password unless you are already in sudo'
-      `sudo DESTDIR=#{config_web} make install`
+      `make PLATFORM=PLATFORM_WEB -e`
+      FileUtils.cp("raylib.h", "#{config_web_include}/")
+      FileUtils.cp("raymath.h", "#{config_web_include}/")
+      FileUtils.cp("rlgl.h", "#{config_web_include}/")
+      FileUtils.cp("libraylib.a", "#{config_web_lib}/")
       `make clean`
+      `zig build -Dtarget=x86_64-windows-gnu`
+      FileUtils.cp("raylib.h", "#{config_win_include}/")
+      FileUtils.cp("raymath.h", "#{config_win_include}/")
+      FileUtils.cp("rlgl.h", "#{config_win_include}/")
+      FileUtils.cp("zig-out/lib/raylib.lib", "#{config_win_lib}/")
     end
   end
   #desc 'Export to single file'
@@ -107,7 +116,11 @@ namespace :build do
     Dir.mkdir(config_build) unless File.exists?(config_build)
     Dir.mkdir(config_build_web) unless File.exists?(config_build_web)
     Dir.chdir(config_game) do
-      system("emcc -Os -Wall -I#{config_web_include} -I#{config_include_mruby} -I#{config_build_temp} #{config_core}/boilerplate_entry.c #{config_web_lib}/libmruby.a #{config_web_lib}/libraylib.a -o #{config_build_web}/index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{config_core}/shell.html -s TOTAL_MEMORY=268435456") # -s ASYNCIFY
+      if File.exists?('assets')
+        system("emcc -Os -Wall -I#{config_web_include} -I#{config_include_mruby} -I#{config_build_temp} #{config_core}/boilerplate_entry.c #{config_web_lib}/libmruby.a #{config_web_lib}/libraylib.a -o #{config_build_web}/index.html -s USE_GLFW=3 -DPLATFORM_WEB --preload-file ./assets --shell-file #{config_core}/shell.html -s TOTAL_MEMORY=268435456 -s ASYNCIFY")
+      else
+        system("emcc -Os -Wall -I#{config_web_include} -I#{config_include_mruby} -I#{config_build_temp} #{config_core}/boilerplate_entry.c #{config_web_lib}/libmruby.a #{config_web_lib}/libraylib.a -o #{config_build_web}/index.html -s USE_GLFW=3 -DPLATFORM_WEB --shell-file #{config_core}/shell.html -s TOTAL_MEMORY=268435456 -s ASYNCIFY")
+      end
     end
   end
 
@@ -123,13 +136,14 @@ namespace :build do
       system("rsync -r #{config_game}/assets #{config_build_tux}") # TODO: maybe get rid of this? copying assets can be costly
     end
   end
-  #desc 'Build the game for Window'
-  #task :win do
-  #  Dir.mkdir("build/win") unless File.exists?("build/win")
-  #  Dir.chdir("build/win") do
-  #    system('zig cc -target x86_64-windows-gnu ../template/game.c -o game -lwinmm -lgdi32 -lopengl32 -I../../mruby/include -I../../raylib/src ../../raylib_lib_files/raylib.lib ../../mruby/build/host/lib/libmruby.a')
-  #  end
-  #end
+  desc 'Build the game for Window'
+  task :win do
+    Dir.mkdir(config_build) unless File.exists?(config_build)
+    Dir.mkdir(config_build_win) unless File.exists?(config_build_win)
+    Dir.chdir(config_build_win) do
+      system("zig cc -target x86_64-windows-gnu #{config_core}/boilerplate_entry.c -o #{config_build_win}/game -lwinmm -lgdi32 -lopengl32 -lws2_32 -I#{config_build_temp} -I#{config_win_include} -I#{config_include_mruby} #{config_win_lib}/libmruby.a #{config_win_lib}/raylib.lib")
+    end
+  end
 end
 
 desc 'Launch the game with the interpreter'
@@ -151,8 +165,11 @@ namespace :clean do
   task :raylib do
     puts 'Not implemented yet'
   end
+  task :game do
+    puts 'Not implemented yet'
+  end
 end
-=begin
+
 desc "Create a server and open your game in your browser"
 task :serve do
   link = "http://localhost:8000/index.html"
@@ -163,8 +180,7 @@ task :serve do
   elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
     system "xdg-open #{link}"
   end
-  `ruby -run -ehttpd build/web/ -p8000`
+  `ruby -run -ehttpd #{config_build_web} -p8000`
 end
 task :s => :serve
-=end
 

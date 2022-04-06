@@ -1,51 +1,71 @@
-# FelFlame Engine
 
-FelFlame Engine is a modular "library-style" Ruby game engine. It allows you to consists of a core set of libraries(mruby + raylib) which you can freely add your own mruby or C libraries on top of to be compiled into a single game or engine. Currently it exports to Linux and Web but more platforms are possible and planned.
+![FelFlameEngine](https://github.com/realtradam/FelECS/blob/master/logos/felflame-logo-text.png?raw=true)
+[![MIT License](https://img.shields.io/github/license/realtradam/FelFlameEngine)](https://github.com/realtradam/FelFlameEngine/blob/master/LICENSE)
+[![Ko-Fi](https://img.shields.io/static/v1?message=Buy%20me%20a%20coffee&logo=kofi&labelColor=ff5e5b&color=434B57&logoColor=white&label=%20)](https://ko-fi.com/tradam)
+
+---
+
+FelFlame Engine is a modular "library-style" Ruby game engine. It consists of a core set of libraries(mruby + Raylib) which you can freely add your own mruby or C libraries on top of to be compiled into a single game or interpreter. Currently it exports to Windows, Web and Linux.
 
 ## How to build
 
-Currently building only tested/used on Linux(Arch and OpenSUSE)  
-No support for building on windows is planned but you are welcome to add it yourself ;)
+Currently building only tested/used on Linux(Artix/Arch and OpenSUSE). If you are on windows you could try using WSL but this is currently untested.  
 
+You need to have any requirements for compiling [Raylib](https://github.com/raysan5/raylib) installed. You must also have Zig and Emscripten installed(it is recommended to use [asdf](https://asdf-vm.com/) to install these)
+
+1. Clone the repository and install gems
 ```sh
+git clone --recursive git@github.com:realtradam/FelFlameEngine.git
+cd FelFlameEngine
+bundler install
+```
 
-# building libraries + engine
+2. Build the underlying libraries
+```sh
 rake build:raylib
 rake build:mruby
+```
+###### At this point you could play around with the interpreters at `core/mruby/bin/mirb` and `core/mruby/bin/mruby` 
 
-# you can now access the interpreters under [add url here]
-
-# if you have a game under 'game/main.rb':
-# build for linux
-rake build:tux
-# build for web
-rake build:web
-
-# you can then try your game with:
-# Desktop:
+3. Playtest your game
+```sh
 rake play
-# Web:
-rake serve
+# or
+rake p
+```
+###### This will execute your game located here: `game/main.rb`
 
-# building for windows planned for the future
+4. Build your game
+```sh
+rake build:win # build for windows
+rake build:web # build for web
+rake build:tux # build for linux
+```
+###### The binaries are located under `build` in their respective directories  
+
+5. Test the web export of your game
+```sh
+rake serve
+# or
+rake s
 ```
 
 ## Directories Explained:
 
-### core/
-Contains the core git-submodules which are needed for the engine(mruby for the Ruby language and Raylib for rendering). Also contains some template files used during compilation.
-
-### vendor/
-The location of any compiled libraries and headers. These are 'included' into the engine or game when it is compiled.
+### mrbgems/
+Here are all the gems you wish to be compiled into the engine. Any directories in this directory will be treated as a gem to be included into the compilation process however you may still need to edit the [build file] to add the appropriate flags if necessary.
 
 ### game/
 All your game files. `main.rb` is the "entry point" of your game and the assets directory is where your assets should go as they are bundled for the web export.
 
+### vendor/
+The location of any compiled libraries and headers. These are 'included' into the engine or game when it is compiled.
+
+### core/
+Contains the core git-submodules which are needed for the engine(mruby for the Ruby language and Raylib for rendering). Also contains some template and configuration files used during compilation.
+
 ### build/
 Where your game is exported to when it is compiled.
-
-### mrbgems/
-Here are all the gems you wish to be compiled into the engine. Any directories in this directory will be treated as a gem to be included into the compilation process however you may still need to edit the [build file] to add the appropriate flags if necessary.
 
 ## Extras:
 
