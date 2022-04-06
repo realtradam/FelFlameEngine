@@ -1,3 +1,4 @@
 build/*
-		game/*
-		game
+game/*
+mrbgems/*
+vendor/*

@@ -1,6 +1,11 @@
-[submodule "mruby"]
-	path = mruby
-	url = git@github.com:realtradam/mruby.git
-[submodule "raylib"]
-	path = raylib
-	url = git@github.com:realtradam/raylib.git
+[submodule "core/mruby"]
+	path = core/mruby
+	url = https://github.com/mruby/mruby
+[submodule "core/raylib"]
+	path = core/raylib
+	url = git@github.com:raysan5/raylib.git
+[submodule "mruby/"]
+	url = git@github.com:mruby/mruby.git
+[submodule "mrbgems/mruby-raylib"]
+	path = mrbgems/mruby-raylib
+	url = https://github.com/realtradam/mruby-raylib
