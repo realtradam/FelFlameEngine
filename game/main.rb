@@ -2,6 +2,8 @@ include Test
 WHITE = Color.new(r: 255, g: 255, b: 255, a: 255)
 GRAY = Color.new(r: 100, g: 100, b: 100, a: 255)
 
+GRAY.r += 50
+
 screen_width = 800
 screen_height = 450
 
@@ -14,7 +16,7 @@ while !window_should_close do
 
   clear_background(WHITE)
 
-  draw_text(text: "Congrats! You created your first window!", posX: 190, posY: 200, fontSize: 20, color: GRAY)
+  draw_text(text: "Congrats! You created your first window!", pos_x: 190, pos_y: 200, font_size: 20, color: GRAY)
 
   end_drawing
 end

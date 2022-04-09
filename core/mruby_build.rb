@@ -1,7 +1,9 @@
+require_relative 'mruby_build_host.rb'
 configure_project_root = File.expand_path('../..')
 configure_mrbgem_dir = File.expand_path("#{configure_project_root}/mrbgems")
 
 
+=begin
 MRuby::Build.new do |conf|
   # load specific toolchain settings
   conf.toolchain :clang
@@ -65,7 +67,6 @@ MRuby::Build.new do |conf|
   # -- YOUR GEMS --
   # gems added into the mrbgems directory
 
-  puts "HERE: #{File.expand_path(configure_mrbgem_dir)}"
   Dir.each_child(configure_mrbgem_dir) do |mrb_gem|
     conf.gem "#{configure_mrbgem_dir}/#{mrb_gem}"
   end
@@ -93,7 +94,7 @@ MRuby::Build.new do |conf|
   conf.enable_bintest
   conf.enable_test
 end
-
+=end
 =begin
 MRuby::CrossBuild.new("tux") do |conf|
   conf.toolchain :clang
@@ -214,7 +215,6 @@ MRuby::CrossBuild.new("win") do |conf|
   # -- YOUR GEMS --
   # gems added into the mrbgems directory
 
-  puts "HERE: #{File.expand_path(configure_mrbgem_dir)}"
   Dir.each_child(configure_mrbgem_dir) do |mrb_gem|
     conf.gem "#{configure_mrbgem_dir}/#{mrb_gem}"
   end

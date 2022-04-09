@@ -4,6 +4,7 @@ config_root = File.expand_path('.')
 config_core = File.expand_path("#{config_root}/core")
 
 config_build_config = File.expand_path("#{config_root}/core/mruby_build.rb")
+config_build_config_fast = File.expand_path("#{config_root}/core/mruby_build_host.rb")
 
 config_build_raylib_source = File.expand_path("#{config_root}/core/raylib/src")
 
@@ -42,6 +43,15 @@ namespace :build do
       FileUtils.cp("build/web/lib/libmruby.a", "#{config_web_lib}/")
       FileUtils.cp("build/host/lib/libmruby.a", "#{config_tux_lib}/")
       FileUtils.cp("build/win/lib/libmruby.a", "#{config_win_lib}/")
+    end
+  end
+
+  desc "Build the engine only for Linux"
+  task :mruby_fast do
+    Dir.chdir("core/mruby") do
+      Dir.mkdir(config_vendor) unless File.exists?(config_vendor)
+      system("env MRUBY_CONFIG=#{config_build_config_fast} rake")
+      FileUtils.cp("build/host/lib/libmruby.a", "#{config_tux_lib}/")
     end
   end
 
